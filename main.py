@@ -8,8 +8,8 @@ from processFrame import ProcessFrame
 frameCount = 0
 
 # global variables
-api = "rtsp://192.168.2.202:554/MainStream"
-DNN = "CAFFE"
+api = "rtsp://192.168.2.202:554/MainStream"     # IP Camera, can use 0 for default
+DNN = "CAFFE"                                   # Face detect model used
 
 
 # init get frame
