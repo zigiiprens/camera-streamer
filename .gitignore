@@ -351,4 +351,5 @@ healthchecksdb
 MigrationBackup/
 
 # Ignore folder namer 'models'
-models
+models/
+data/
