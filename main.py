@@ -24,13 +24,6 @@ except ValueError:
 # init process frame
 processingThread = ProcessFrame(DNN)
 
-######################33333
-###################33333333
-##############
-################4444444s
-#ddddddddd
-
-
 while True:
 
     # get frame
