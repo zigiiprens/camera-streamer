@@ -36,7 +36,7 @@ while True:
         # increment frame count
         frameCount += 1
 
-        if (frameCount > 15) and (currentFrame[0] == True):
+        if (frameCount > 30) and (currentFrame[0] == True):
             processingThread.start(currentFrame[1])
             frameCount = 0
         else:
