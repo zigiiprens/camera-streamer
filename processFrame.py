@@ -6,8 +6,9 @@ from threading import Thread
 
 class ProcessFrame():
 
-    def __init__(self, algorithm):
+    def __init__(self, algorithm, api_mode):
 
+        self.mode = api_mode
         self.imgDataFolder = "data/img/"
         self._count = 0
         self.confidence_threshold = 0.5
@@ -46,27 +47,41 @@ class ProcessFrame():
             self.detections = self.net.forward()
 
             if self.process_frame is not None:
+                if len(self.detections) > 0:
+                    #print("[INFO] Process_frame is ready for detections")
+                    # loop over the detections
+                    for i in range(0, self.detections.shape[2]):
 
-                #print("[INFO] Process_frame is ready for detections")
-                # loop over the detections
-                for i in range(0, self.detections.shape[2]):
-                    # extract the confidence (i.e., probability) associated with the
-                    # prediction
-                    self.confidence = self.detections[0, 0, i, 2]
-                    # filter out weak detections by ensuring the `confidence` is
-                    if self.confidence < self.confidence_threshold:
-                        continue
-                    self.box = self.detections[0, 0,
-                                               i, 3:7] * np.array([w, h, w, h])
-                    (startX, startY, endX, endY) = self.box.astype("int")
-                    #face_locations += [(startY, endX, endY, startX)]
-                    self.cropped_frame = self.process_frame[startY:endY, startX:endX]
-                    self.write_string = self.imgDataFolder + \
-                        str(self._count) + ".jpg"
-                    cv.imwrite(self.write_string, self.cropped_frame)
-                    print("[INFO] Found faces, saving face to " +
-                          self.write_string)
-                    self._count += 1
+                        # extract the confidence (i.e., probability) associated with the
+                        # prediction
+                        self.confidence = self.detections[0, 0, i, 2]
+
+                        # filter out weak detections by ensuring the `confidence` is
+                        if self.confidence < self.confidence_threshold:
+                            continue
+
+                        # compute the (x, y)-coordinates of the bounding box for
+                        # the face
+                        self.box = self.detections[0, 0,
+                                                   i, 3:7] * np.array([w, h, w, h])
+                        (startX, startY, endX, endY) = self.box.astype("int")
+
+                        #face_locations += [(startY, endX, endY, startX)]
+
+                        # extract the face ROI and grab the ROI dimensions
+                        self.cropped_frame = self.process_frame[startY:endY, startX:endX]
+                        (fH, fW) = self.cropped_frame.shape[:2]
+
+                        # ensure the face width and height are sufficiently large
+                        if fW < 20 or fH < 20:
+                            continue
+
+                        self.write_string = self.imgDataFolder + \
+                            str(self._count) + ".jpg"
+                        cv.imwrite(self.write_string, self.cropped_frame)
+                        print("[INFO] Found faces, saving face to " +
+                              self.write_string)
+                        self._count += 1
             else:
                 print("[INFO] Process_frame is empty")
 

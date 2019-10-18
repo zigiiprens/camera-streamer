@@ -1,9 +1,11 @@
 import numpy as np
 import cv2 as cv
+import time
 
 api = "rtsp://192.168.2.202:554/MainStream"
 
 cap = cv.VideoCapture(api, cv.CAP_FFMPEG)
+time.sleep(2.0)
 
 while(True):
     # Capture frame-by-frame
@@ -11,7 +13,7 @@ while(True):
     print("[INFO] Type incomming to processing frame :" + str(type(frame)))
 
     # Our operations on the frame come here
-    #gray = cv.cvtColor(frame)
+    rgb = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
 
     # Display the resulting frame
     cv.imshow('frame', frame)

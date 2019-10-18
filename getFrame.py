@@ -2,9 +2,13 @@ import cv2 as cv
 
 class GetFrame:
 
-    def __init__(self, video_source):
-
-        self.vid = cv.VideoCapture(video_source, cv.CAP_FFMPEG)
+    def __init__(self, video_source, api_mode):
+        #self.vid = None
+        
+        if api_mode == "IP_CAMERA":
+            self.vid = cv.VideoCapture(video_source, cv.CAP_FFMPEG)
+        elif api_mode == "USB":
+            self.vid = cv.VideoCapture(int(video_source))
         
         if not self.vid.isOpened():
             raise ValueError("[INFO] Unable to open camera ", video_source)
@@ -20,9 +24,9 @@ class GetFrame:
     def get_frame(self):
         if self.vid.isOpened():
             ret,frame = self.vid.read()
-            #frame = cv.resize(frame, (self.width, self.height))
+            frame = cv.resize(frame, (int(0.4*self.width), int(0.5*self.height)))
             if ret:
-                return (ret, frame)
+                return (ret, cv.cvtColor(frame, cv.COLOR_BGR2RGB))
             else:
                 return (ret, None)
         else:
