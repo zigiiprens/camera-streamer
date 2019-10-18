@@ -10,13 +10,13 @@ time.sleep(2.0)
 while(True):
     # Capture frame-by-frame
     ret, frame = cap.read()
-    print("[INFO] Type incomming to processing frame :" + str(type(frame)))
+    #print("[INFO] Type incomming to processing frame :" + str(type(frame)))
 
     # Our operations on the frame come here
     rgb = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
 
     # Display the resulting frame
-    cv.imshow('frame', frame)
+    cv.imshow('frame', rgb)
     if cv.waitKey(1) & 0xFF == ord('q'):
         break
 
