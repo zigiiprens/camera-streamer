@@ -10,7 +10,7 @@ class ProcessFrame():
 
         self.imgDataFolder = "data/img/"
         self._count = 0
-        self.confidence_threshold = 0.7
+        self.confidence_threshold = 0.5
         self.process_frame = None
         self.stopped = False
 
@@ -27,8 +27,6 @@ class ProcessFrame():
             print("[INFO] Loaded model from TENSORFLOW")
 
     def start(self, frame):
-        #print("[INFO] Type incomming frame :" + str(type(frame)))
-        #print("[INFO] Type process frame :" + str(type(self.process_frame)))
         try:
             self.process_frame = frame
         except:
