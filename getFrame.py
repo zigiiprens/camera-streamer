@@ -2,9 +2,10 @@ import cv2 as cv
 
 class GetFrame:
 
-    def __init__(self, video_source, api_mode):
-        #self.vid = None
+    def __init__(self):
+        print("[INFO] Initializing GetFrame Class")
         
+    def open_camera(self, video_source, api_mode):
         if api_mode == "IP_CAMERA":
             self.vid = cv.VideoCapture(video_source, cv.CAP_FFMPEG)
         elif api_mode == "USB":
@@ -19,7 +20,6 @@ class GetFrame:
 
         print("[INFO] Width = " + str(self.width))
         print("[INFO] Height = " + str(self.height))
-
 
     def get_frame(self):
         if self.vid.isOpened():

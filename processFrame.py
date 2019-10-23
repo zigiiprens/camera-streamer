@@ -21,11 +21,13 @@ class ProcessFrame():
             self.net = cv.dnn.readNetFromCaffe(self.configFile, self.modelFile)
             print("[INFO] Loaded model from CAFFE")
         else:
+            """
             self.modelFile = "models/opencv_face_detector_uint8.pb"
             self.configFile = "models/opencv_face_detector.pbtxt"
             self.net = cv.dnn.readNetFromTensorflow(
                 self.modelFile, self.configFile)
             print("[INFO] Loaded model from TENSORFLOW")
+            """
 
     def start(self, frame):
         try:
