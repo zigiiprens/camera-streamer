@@ -8,6 +8,7 @@ class ProcessFrame():
 
     def __init__(self, algorithm, api_mode):
 
+        self.algo = algorithm
         self.mode = api_mode
         self.imgDataFolder = "data/img/"
         self._count = 0
@@ -15,19 +16,17 @@ class ProcessFrame():
         self.process_frame = None
         self.stopped = False
 
-        if algorithm == "CAFFE":
+        if self.algo == "CAFFE":
             self.modelFile = "models/res10_300x300_ssd_iter_140000_fp16.caffemodel"
             self.configFile = "models/deploy.prototxt"
             self.net = cv.dnn.readNetFromCaffe(self.configFile, self.modelFile)
             print("[INFO] Loaded model from CAFFE")
-        else:
-            """
+        elif self.algo == "TF":
             self.modelFile = "models/opencv_face_detector_uint8.pb"
             self.configFile = "models/opencv_face_detector.pbtxt"
             self.net = cv.dnn.readNetFromTensorflow(
                 self.modelFile, self.configFile)
             print("[INFO] Loaded model from TENSORFLOW")
-            """
 
     def start(self, frame):
         try:
@@ -38,12 +37,13 @@ class ProcessFrame():
         Thread(target=self.processDetect, args=()).start()
 
     def processDetect(self):
-        #print("[INFO] Starting thread")
         while not self.stopped:
-            self.process_frame = self.process_frame[:, :, ::-1]
+            if self.algo == "CAFFE":
+                print("[INFO] Inside ProcessDetect of CAFFE")
+                self.process_frame = self.process_frame[:, :, ::-1]
+
             (h, w) = self.process_frame.shape[:2]
-            blob = cv.dnn.blobFromImage(cv.resize(
-                self.process_frame, (300, 300)), 1.0, (300, 300), (104.0, 177.0, 123.0))
+            blob = cv.dnn.blobFromImage(cv.resize(self.process_frame, (300, 300)), 1.0, (300, 300), (104.0, 177.0, 123.0))
 
             self.net.setInput(blob)
             self.detections = self.net.forward()
@@ -89,7 +89,6 @@ class ProcessFrame():
 
             #self.confidence = 0
             self.stopped = True
-            #print("[INFO] Stopping thread")
 
         self.stopped = False
 

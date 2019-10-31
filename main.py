@@ -1,11 +1,19 @@
 import os
 import sys
+#import numba
 import cv2 as cv
 import numpy as np
 from getFrame import GetFrame
 from processFrame import ProcessFrame
 from dotenv import load_dotenv
+#from numba import cuda
 
+#device_id = cuda.gpus
+#numba.cuda.select_device(device_id)
+
+#print("[INFO] Numba version = " + numba.__version__)
+#print("[INFO] Device ID = " + str(device_id))
+#print("[INFO] Device NAME = " + device_name)
 
 # Initializing main code
 load_dotenv(verbose=True)
