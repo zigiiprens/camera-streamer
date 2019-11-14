@@ -1,3 +1,5 @@
 {
-    "python.pythonPath": "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\Python37_64\\python.exe"
+    "python.pythonPath": "/home/samir/Developer/anaconda3/envs/pythoncuda/bin/python3.7",
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true
 }
