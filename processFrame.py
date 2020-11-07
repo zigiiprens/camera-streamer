@@ -4,10 +4,8 @@ import numpy as np
 from threading import Thread
 
 
-class ProcessFrame():
-
+class ProcessFrame:
     def __init__(self, algorithm, api_mode):
-
         self.algo = algorithm
         self.mode = api_mode
         self.imgDataFolder = "data/img/"
@@ -15,6 +13,11 @@ class ProcessFrame():
         self.confidence_threshold = 0.5
         self.process_frame = None
         self.stopped = False
+        self.detections = None
+        self.confidence = None
+        self.box = None
+        self.cropped_frame = None
+        self.write_string = None
 
         if self.algo == "CAFFE":
             self.modelFile = "models/res10_300x300_ssd_iter_140000_fp16.caffemodel"
@@ -43,14 +46,15 @@ class ProcessFrame():
                 self.process_frame = self.process_frame[:, :, ::-1]
 
             (h, w) = self.process_frame.shape[:2]
-            blob = cv.dnn.blobFromImage(cv.resize(self.process_frame, (300, 300)), 1.0, (300, 300), (104.0, 177.0, 123.0))
+            blob = cv.dnn.blobFromImage(cv.resize(self.process_frame, (300, 300)), 1.0, (300, 300),
+                                        (104.0, 177.0, 123.0))
 
             self.net.setInput(blob)
             self.detections = self.net.forward()
 
             if self.process_frame is not None:
                 if len(self.detections) > 0:
-                    #print("[INFO] Process_frame is ready for detections")
+                    # print("[INFO] Process_frame is ready for detections")
                     # loop over the detections
                     for i in range(0, self.detections.shape[2]):
 
@@ -65,10 +69,10 @@ class ProcessFrame():
                         # compute the (x, y)-coordinates of the bounding box for
                         # the face
                         self.box = self.detections[0, 0,
-                                                   i, 3:7] * np.array([w, h, w, h])
+                                   i, 3:7] * np.array([w, h, w, h])
                         (startX, startY, endX, endY) = self.box.astype("int")
 
-                        #face_locations += [(startY, endX, endY, startX)]
+                        # face_locations += [(startY, endX, endY, startX)]
 
                         # extract the face ROI and grab the ROI dimensions
                         self.cropped_frame = self.process_frame[startY:endY, startX:endX]
@@ -79,7 +83,7 @@ class ProcessFrame():
                             continue
 
                         self.write_string = self.imgDataFolder + \
-                            str(self._count) + ".jpg"
+                                            str(self._count) + ".jpg"
                         cv.imwrite(self.write_string, self.cropped_frame)
                         print("[INFO] Found faces, saving face to " +
                               self.write_string)
@@ -87,7 +91,7 @@ class ProcessFrame():
             else:
                 print("[INFO] Process_frame is empty")
 
-            #self.confidence = 0
+            # self.confidence = 0
             self.stopped = True
 
         self.stopped = False

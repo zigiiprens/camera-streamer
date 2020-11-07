@@ -1,19 +1,8 @@
 import os
 import sys
-#import numba
-import cv2 as cv
-import numpy as np
 from getFrame import GetFrame
 from processFrame import ProcessFrame
 from dotenv import load_dotenv
-#from numba import cuda
-
-#device_id = cuda.gpus
-#numba.cuda.select_device(device_id)
-
-#print("[INFO] Numba version = " + numba.__version__)
-#print("[INFO] Device ID = " + str(device_id))
-#print("[INFO] Device NAME = " + device_name)
 
 # Initializing main code
 load_dotenv(verbose=True)
@@ -24,45 +13,41 @@ FPS = int(os.getenv("FPS"))
 DNN = os.getenv("DNN")
 
 
-class MainApp():
-
+class MainApp:
     def __init__(self):
         # Initialize GetFrame Class etc ...
         self.gettingFrame = GetFrame()
         self.currentFrame = None
         self.frameCount = 0
+        self.url = None
         self.api_modeFirst = os.getenv("API_MODE1")
         self.api_modeSecond = os.getenv("API_MODE2")
 
         # init ProcessFrame Class
         self.processingThread = ProcessFrame(DNN, self.api_modeSecond)
-        if self.api_modeFirst == "USB":
-            self.initialize_main("API_USB", self.api_modeFirst)
+        if self.api_modeFirst == "WEBCAM":
+            self.initialize_main("API_WEBCAM", self.api_modeFirst)
 
         else:
             self.initialize_main("API_IP_CAMERA", self.api_modeFirst)
 
-
-    def initialize_main(self, api_cam_init, api_modeFirst_init):
-        self.api = os.getenv(api_cam_init)
-        print("[INFO] Using IP CAMERA: " + self.api)
+    def initialize_main(self, api_cam_init, api_mode_first_init):
+        self.url = os.getenv(api_cam_init)
+        print("[INFO] Using IP CAMERA: " + self.url)
         # init get frame
         try:
-            self.gettingFrame.open_camera(self.api, api_modeFirst_init)
+            self.gettingFrame.open_camera(self.url, api_mode_first_init)
         except ValueError:
-            print(ValueError.__str__())
+            print(ValueError.message)
             print("[INFO] Exiting program...")
             sys.exit()
 
-
-    def mainLoop(self):
+    def main_loop(self):
         while True:
-
             # get frame
             self.currentFrame = self.gettingFrame.get_frame()
 
             if self.currentFrame[1] is not None:
-
                 # increment frame count
                 self.frameCount += 1
 
@@ -73,5 +58,6 @@ class MainApp():
                     continue
 
 
-main = MainApp()
-main.mainLoop()
+if __name__ == '__main__':
+    main = MainApp()
+    main.main_loop()
