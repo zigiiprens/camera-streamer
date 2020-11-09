@@ -8,7 +8,7 @@ class ProcessFrame:
     def __init__(self, algorithm, api_mode):
         self.algo = algorithm
         self.mode = api_mode
-        self.imgDataFolder = "../data/img/"
+        self.imgDataFolder = "data/img/"
         self._count = 0
         self.confidence_threshold = 0.5
         self.process_frame = None
@@ -20,13 +20,13 @@ class ProcessFrame:
         self.write_string = None
 
         if self.algo == "CAFFE":
-            self.modelFile = "models/res10_300x300_ssd_iter_140000_fp16.caffemodel"
-            self.configFile = "models/deploy.prototxt"
+            self.modelFile = "src/models/res10_300x300_ssd_iter_140000_fp16.caffemodel"
+            self.configFile = "src/models/deploy.prototxt"
             self.net = cv.dnn.readNetFromCaffe(self.configFile, self.modelFile)
             print("[INFO] Loaded model from CAFFE")
         elif self.algo == "TF":
-            self.modelFile = "models/opencv_face_detector_uint8.pb"
-            self.configFile = "models/opencv_face_detector.pbtxt"
+            self.modelFile = "src/models/opencv_face_detector_uint8.pb"
+            self.configFile = "src/models/opencv_face_detector.pbtxt"
             self.net = cv.dnn.readNetFromTensorflow(
                 self.modelFile, self.configFile)
             print("[INFO] Loaded model from TENSORFLOW")
@@ -81,8 +81,8 @@ class ProcessFrame:
                             continue
 
                         self.write_string = f'{self.imgDataFolder + str(self._count)}.jpg'
-                        cv.imwrite(self.write_string, self.cropped_frame)
-                        print("[INFO] Found faces, saving face to {}" .format(self.write_string))
+                        ret = cv.imwrite(self.write_string, self.cropped_frame)
+                        print("[INFO] Found faces, saving face to {}, status {}" .format(self.write_string, ret))
                         self._count += 1
             else:
                 print("[INFO] Process_frame is empty")

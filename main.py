@@ -1,9 +1,10 @@
 import os
 import sys
 import time
+from dotenv import load_dotenv
 from src.getFrame import GetFrame
 from src.processFrame import ProcessFrame
-from dotenv import load_dotenv
+
 
 # Initializing main code
 print("[INFO] System architecture is {}" .format(sys.platform))
