@@ -16,14 +16,14 @@ class GetFrame:
             self.vid = cv.VideoCapture(int(video_source))
 
         if not self.vid.isOpened():
-            raise ValueError("[INFO] Unable to open camera ", video_source)
+            raise ValueError("[INFO] Unable to open camera {}" .format(video_source))
 
         # get cap property 
         self.width = self.vid.get(cv.CAP_PROP_FRAME_WIDTH)  # float
         self.height = self.vid.get(cv.CAP_PROP_FRAME_HEIGHT)  # float
 
-        print("[INFO] Width = " + str(self.width))
-        print("[INFO] Height = " + str(self.height))
+        print("[INFO] Width = {}" .format(self.width))
+        print("[INFO] Height = {}" .format(self.height))
 
     def get_frame(self, ret=None):
         if self.vid.isOpened():

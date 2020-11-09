@@ -20,13 +20,13 @@ class ProcessFrame:
         self.write_string = None
 
         if self.algo == "CAFFE":
-            self.modelFile = "models/res10_300x300_ssd_iter_140000_fp16.caffemodel"
-            self.configFile = "models/deploy.prototxt"
+            self.modelFile = "src/models/res10_300x300_ssd_iter_140000_fp16.caffemodel"
+            self.configFile = "src/models/deploy.prototxt"
             self.net = cv.dnn.readNetFromCaffe(self.configFile, self.modelFile)
             print("[INFO] Loaded model from CAFFE")
         elif self.algo == "TF":
-            self.modelFile = "models/opencv_face_detector_uint8.pb"
-            self.configFile = "models/opencv_face_detector.pbtxt"
+            self.modelFile = "src/models/opencv_face_detector_uint8.pb"
+            self.configFile = "src/models/opencv_face_detector.pbtxt"
             self.net = cv.dnn.readNetFromTensorflow(
                 self.modelFile, self.configFile)
             print("[INFO] Loaded model from TENSORFLOW")
@@ -34,15 +34,15 @@ class ProcessFrame:
     def start(self, frame):
         try:
             self.process_frame = frame
-        except:
-            print("[INFO] Could not copy frame into process_frame")
+        except Exception as ex:
+            print("[ERROR] Could not copy frame into process_frame, {}" .format(ex.message))
 
         Thread(target=self.processDetect, args=()).start()
 
     def processDetect(self):
         while not self.stopped:
             if self.algo == "CAFFE":
-                print("[INFO] Inside ProcessDetect of CAFFE")
+                print("[INFO] Inside ProcessDetect of algorithm {}" .format(self.algo))
                 self.process_frame = self.process_frame[:, :, ::-1]
 
             (h, w) = self.process_frame.shape[:2]
@@ -54,7 +54,6 @@ class ProcessFrame:
 
             if self.process_frame is not None:
                 if len(self.detections) > 0:
-                    # print("[INFO] Process_frame is ready for detections")
                     # loop over the detections
                     for i in range(0, self.detections.shape[2]):
 
@@ -68,8 +67,7 @@ class ProcessFrame:
 
                         # compute the (x, y)-coordinates of the bounding box for
                         # the face
-                        self.box = self.detections[0, 0,
-                                   i, 3:7] * np.array([w, h, w, h])
+                        self.box = self.detections[0, 0, i, 3:7] * np.array([w, h, w, h])
                         (startX, startY, endX, endY) = self.box.astype("int")
 
                         # face_locations += [(startY, endX, endY, startX)]
@@ -79,19 +77,16 @@ class ProcessFrame:
                         (fH, fW) = self.cropped_frame.shape[:2]
 
                         # ensure the face width and height are sufficiently large
-                        if fW < 20 or fH < 20:
+                        if fW < 50 or fH < 50:
                             continue
 
-                        self.write_string = self.imgDataFolder + \
-                                            str(self._count) + ".jpg"
-                        cv.imwrite(self.write_string, self.cropped_frame)
-                        print("[INFO] Found faces, saving face to " +
-                              self.write_string)
+                        self.write_string = f'{self.imgDataFolder + str(self._count)}.jpg'
+                        ret = cv.imwrite(self.write_string, self.cropped_frame)
+                        print("[INFO] Found faces, saving face to {}, status {}" .format(self.write_string, ret))
                         self._count += 1
             else:
                 print("[INFO] Process_frame is empty")
 
-            # self.confidence = 0
             self.stopped = True
 
         self.stopped = False
