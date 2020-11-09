@@ -34,8 +34,8 @@ class ProcessFrame:
     def start(self, frame):
         try:
             self.process_frame = frame
-        except ValueError:
-            print("[INFO] Could not copy frame into process_frame, {}" .format(ValueError.message))
+        except Exception as ex:
+            print("[ERROR] Could not copy frame into process_frame, {}" .format(ex.message))
 
         Thread(target=self.processDetect, args=()).start()
 
@@ -67,8 +67,7 @@ class ProcessFrame:
 
                         # compute the (x, y)-coordinates of the bounding box for
                         # the face
-                        self.box = self.detections[0, 0,
-                                   i, 3:7] * np.array([w, h, w, h])
+                        self.box = self.detections[0, 0, i, 3:7] * np.array([w, h, w, h])
                         (startX, startY, endX, endY) = self.box.astype("int")
 
                         # face_locations += [(startY, endX, endY, startX)]
@@ -78,7 +77,7 @@ class ProcessFrame:
                         (fH, fW) = self.cropped_frame.shape[:2]
 
                         # ensure the face width and height are sufficiently large
-                        if fW < 20 or fH < 20:
+                        if fW < 50 or fH < 50:
                             continue
 
                         self.write_string = f'{self.imgDataFolder + str(self._count)}.jpg'

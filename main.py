@@ -6,10 +6,8 @@ from processFrame import ProcessFrame
 from dotenv import load_dotenv
 
 # Initializing main code
-load_dotenv(verbose=True)
-
 print("[INFO] System architecture is {}" .format(sys.platform))
-
+load_dotenv(verbose=True)
 __frames__ = int(os.getenv("FPS"))
 __dnn__ = os.getenv("DNN")
 
@@ -39,9 +37,9 @@ class MainApp:
         # init get frame
         try:
             self.gettingFrame.open_camera(self.url, api_mode_first_init)
-        except ValueError:
-            print(ValueError.message)
-            print("[INFO] Exiting program...")
+        except Exception as ex:
+            print(ex.message)
+            print("[ERROR] Exiting program...")
             sys.exit()
 
     def main_loop(self):
@@ -55,15 +53,14 @@ class MainApp:
                 t = time.time() - t
                 self.frameCount += 1
                 self.frameTimer += t
-                
-                if self.frameCount > __frames__:
-                    if ret:
-                        self.processingThread.start(self.currentFrame[1])
-                        print("[INFO] For {} frames, time spent is {}" .format(__frames__, self.frameTimer))
-                        print("[INFO] FPS calculation as {}" .format(int(__frames__/int(self.frameTimer))))
-                        self.frameCount = 0
-                        self.frameTimer = 0
-                        ret = None
+
+                if (self.frameCount > __frames__) and ret:
+                    self.processingThread.start(self.currentFrame)
+                    print("[INFO] For {} frames, time spent is {}".format(__frames__, self.frameTimer))
+                    print("[INFO] FPS calculation as {}".format(int(__frames__ / int(self.frameTimer))))
+                    print("-----------------------------------------------------------------------------")
+                    self.frameCount = 0
+                    self.frameTimer = 0
                 else:
                     continue
 
