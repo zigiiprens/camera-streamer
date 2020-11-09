@@ -8,7 +8,7 @@ class ProcessFrame:
     def __init__(self, algorithm, api_mode):
         self.algo = algorithm
         self.mode = api_mode
-        self.imgDataFolder = "data/img/"
+        self.imgDataFolder = "../data/img/"
         self._count = 0
         self.confidence_threshold = 0.5
         self.process_frame = None

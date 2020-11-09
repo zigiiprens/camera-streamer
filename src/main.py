@@ -1,8 +1,8 @@
 import os
 import sys
 import time
-from getFrame import GetFrame
-from processFrame import ProcessFrame
+from src.getFrame import GetFrame
+from src.processFrame import ProcessFrame
 from dotenv import load_dotenv
 
 # Initializing main code
