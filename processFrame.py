@@ -6,7 +6,6 @@ from threading import Thread
 
 class ProcessFrame:
     def __init__(self, algorithm, api_mode):
-        self.__class__ = "ProcessFrame"
         self.algo = algorithm
         self.mode = api_mode
         self.imgDataFolder = "data/img/"
@@ -43,7 +42,7 @@ class ProcessFrame:
     def processDetect(self):
         while not self.stopped:
             if self.algo == "CAFFE":
-                print("[INFO] Inside ProcessDetect of CAFFE")
+                print("[INFO] Inside ProcessDetect of algorithm {}" .format(self.algo))
                 self.process_frame = self.process_frame[:, :, ::-1]
 
             (h, w) = self.process_frame.shape[:2]

@@ -5,7 +5,6 @@ class GetFrame:
 
     def __init__(self):
         print("[INFO] Initializing GetFrame Class")
-        self.__class__ = "GetFrame"
         self.width = None
         self.height = None
         self.vid = None

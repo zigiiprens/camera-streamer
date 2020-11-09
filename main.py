@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 from getFrame import GetFrame
 from processFrame import ProcessFrame
 from dotenv import load_dotenv
@@ -7,9 +8,9 @@ from dotenv import load_dotenv
 # Initializing main code
 load_dotenv(verbose=True)
 
-print("[INFO] System architecture is {}" .format(sys.platform()))
+print("[INFO] System architecture is {}" .format(sys.platform))
 
-__fps__ = int(os.getenv("FPS"))
+__frames__ = int(os.getenv("FPS"))
 __dnn__ = os.getenv("DNN")
 
 
@@ -19,7 +20,9 @@ class MainApp:
         self.gettingFrame = GetFrame()
         self.currentFrame = None
         self.frameCount = 0
+        self.frameTimer = 0
         self.url = None
+
         self.api_modeFirst = os.getenv("API_MODE1")
         self.api_modeSecond = os.getenv("API_MODE2")
 
@@ -44,16 +47,23 @@ class MainApp:
     def main_loop(self):
         while True:
             # get frame
-            self.currentFrame = self.gettingFrame.get_frame()
+            t = time.time()
+            ret, self.currentFrame = self.gettingFrame.get_frame()
 
-            if self.currentFrame[1] is not None:
+            if self.currentFrame is not None:
                 # increment frame count
+                t = time.time() - t
                 self.frameCount += 1
-
-                if self.frameCount > __fps__:
-                    if self.currentFrame[0]:
+                self.frameTimer += t
+                
+                if self.frameCount > __frames__:
+                    if ret:
                         self.processingThread.start(self.currentFrame[1])
+                        print("[INFO] For {} frames, time spent is {}" .format(__frames__, self.frameTimer))
+                        print("[INFO] FPS calculation as {}" .format(int(__frames__/int(self.frameTimer))))
                         self.frameCount = 0
+                        self.frameTimer = 0
+                        ret = None
                 else:
                     continue
 
